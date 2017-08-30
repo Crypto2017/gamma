@@ -4,15 +4,26 @@ class QueueError(Exception):
 		self.message=msg
 		
 class Queue():
-	def __init__(self,*itmes):
+	def __init__(self,*itmes,maxsize=None):
+		self.maxsize=maxsize
 		self.items=list(items)
-	def add(self,*items):
+	def put(self,*items):
+		dif=[]
 		self.items.append(list(items))
-		return self
+		if self.maxsize!=None:
+			if self.length()>self.maxsize:
+				dif=self.items[self.maxsize:]
+				self.itmes=self.items[:self.maxsize]
+		return dif
 	
 	def attach(self,q):
+		dif=[]
 		self.items.extend(q.items)
-		return self
+		if self.maxsize!=None:
+			if self.length()>self.maxsize:
+				dif=self.items[self.maxsize:]
+				self.itmes=self.items[:self.maxsize]
+		return dif
 		
 	def get(self):
 		if len(self.items)>0:
@@ -22,10 +33,13 @@ class Queue():
 		else:
 			raise QueueError(" queue is empty.")
 			
-	def is_empty(self):
+	def empty(self):
 		if len(self.items)>0: return False
 		return True
-		
+	def full(self):
+		if self.maxsize!=None:
+			if len(self.items)>=self.maxsize: return True
+		return False
 	def length(self):
 		return len(self.items)
 		
